@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_MCP2_SERVER</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 stateless server contract</DESCRIPT>
+    <EXPOSURE>2</EXPOSURE>
+    <STATE>1</STATE>
+    <UNICODE>X</UNICODE>
+   </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>COMPLETIONS_COMPLETE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle completion/complete</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_CONTEXT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get the current per-request context</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_INSTRUCTIONS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Optional instructions / system-prompt hint</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Server name advertised to clients</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_VERSION</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Server version advertised to clients</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>PROMPTS_GET</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle prompts/get</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>PROMPTS_LIST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle prompts/list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>RESOURCES_LIST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle resources/list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>RESOURCES_READ</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle resources/read</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>RESOURCES_TMPLS_LIST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle resources/templates/list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_CONTEXT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set the per-request context</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SUPPORTS_COMPLETIONS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether the server offers completions</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SUPPORTS_LOGGING</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether the server accepts logging/setLevel</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SUPPORTS_PROMPTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether the server offers prompts</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SUPPORTS_RESOURCES</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether the server offers resources</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SUPPORTS_TOOLS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether the server offers tools</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>TOOLS_CALL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle tools/call</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>TOOLS_LIST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle tools/list</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_MCP2_DISPATCH_MODERN</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 modern era dispatcher (2026-07-28)</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>ARGUMENT_TO_HEADER_VALUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Render a body argument as a header value</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>ASSERT_HEADER_VALUE_SAFE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Reject unsafe / control characters in a header</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>ASSERT_SAFE_INTEGER_TEXT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Assert integer text within JS safe-integer bounds</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>BUILD_CAPABILITIES</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Build the advertised capabilities object</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>COLLECT_PARAM_HEADERS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Collect x-mcp-header annotations from a schema</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>COMPARE_PARAM_HEADER</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Compare a mirrored header against the body</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>CONSTRUCTOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create a modern dispatcher for a server</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>DISPATCH</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Dispatch one modern JSON-RPC request</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_COMPLETIONS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle completion/complete</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_DISCOVER</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle server/discover</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_PROMPTS_GET</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle prompts/get (with header mirroring)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_PROMPTS_LIST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle prompts/list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_RESOURCES_LIST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle resources/list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_RESOURCES_READ</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle resources/read</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_RESOURCES_TMPLS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle resources/templates/list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_TOOLS_CALL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle tools/call (with header mirroring)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_TOOLS_LIST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle tools/list</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HAS_HEADER</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Check header presence independently of its value</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HAS_X_MCP_HEADER_AT_OR_BELOW</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Detect nested x-mcp-header annotations</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>IS_CACHEABLE_RESULT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether a result carries cache hints</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>IS_VALID_HEADER_SUFFIX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Validate a header-name suffix</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>NORMALIZE_HEADER_VALUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Normalize a received header value</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_MODERN_CONTEXT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Populate the server context from _meta</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>STAMP_CACHE_FIELDS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Write ttlMs / cacheScope onto a result</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>STAMP_RESULT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Stamp the modern result envelope</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>VALIDATE_META</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Validate the modern request _meta block</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>VALIDATE_MIRROR_HEADERS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Validate mirrored Mcp-* headers against the body</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

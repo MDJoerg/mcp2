@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZMCP2_TASK_STA_MSG</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>SSTR</DATATYPE>
+    <LENG>000512</LENG>
+    <DDTEXT>MCP2 task status message</DDTEXT>
+    <DOMMASTER>E</DOMMASTER>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>

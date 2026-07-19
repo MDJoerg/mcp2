@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_MCP2_REQ_COMPLETE</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 completion/complete request</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>CONSTRUCTOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Parse a completion/complete params object</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_ARGUMENT_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Name of the argument being completed</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_ARGUMENT_VALUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Partial value typed so far</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_CONTEXT_JSON</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Previously-resolved argument context object</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_META</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>The request _meta object</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_REF_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Prompt name (only when ref/prompt)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_REF_TYPE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Reference kind: ref/prompt or ref/resource</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_REF_URI</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Resource URI (only when ref/resource)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HAS_CONTEXT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether resolved-argument context was supplied</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

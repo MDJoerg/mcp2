@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_MCP2_RESP_COMPLETE</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 completion/complete response</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>ADD_VALUE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Append a single completion candidate</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_CACHE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set modern cache hints (ttlMs / cacheScope)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_HAS_MORE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Flag that more matches exist beyond those returned</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_TOTAL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set the total number of matches</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_VALUES</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set all completion candidates at once</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,13 @@
+{
+  "name": "mcp2",
+  "private": true,
+  "description": "Development tooling for the mcp2 ABAP MCP Server SDK (static checks only; the SDK itself is pure ABAP)",
+  "scripts": {
+    "lint": "abaplint"
+  },
+  "devDependencies": {
+    "@abaplint/cli": "^2.119.56",
+    "@abaplint/runtime": "^2.13.35",
+    "@abaplint/transpiler-cli": "^2.13.35"
+  }
+}

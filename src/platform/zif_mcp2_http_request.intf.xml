@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_MCP2_HTTP_REQUEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 HTTP request abstraction</DESCRIPT>
+    <EXPOSURE>2</EXPOSURE>
+    <STATE>1</STATE>
+    <UNICODE>X</UNICODE>
+   </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_BODY</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Raw request body as string (UTF-8)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_HEADER</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Request header value (empty string if absent)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_HEADER_NAMES</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>All header names present on the request</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_METHOD</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>HTTP method (GET, POST, OPTIONS, ...)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_ORIGIN</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Origin header value (empty if absent)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_PATH</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>URL path (without query string)</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_MCP2_REQ_GET_PROMPT</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 prompts/get request</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>CONSTRUCTOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Parse a prompts/get params object</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_ARGUMENTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Prompt arguments as name/value pairs</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_ARG_STRING</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Read a string argument by name</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_ARG_STRING_OR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Read a string argument or a default</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_INPUT_RESPONSES</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Client answers to a prior inputRequired (MRTR)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_META</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>The request _meta object</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_NAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Prompt name to retrieve</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_REQUEST_STATE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Opaque continuation token (MRTR)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HAS_ARG</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether a named argument is present</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HAS_ARGUMENTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether arguments were supplied</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HAS_INPUT_RESPONSES</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether inputResponses were supplied (MRTR)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>IS_RETRY</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether this call is an MRTR retry</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>REQUIRE_ARG_STRING</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Read a required string argument</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

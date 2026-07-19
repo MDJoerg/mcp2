@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_MCP2_HTTP_HANDLER</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 ICF HTTP handler</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>CLASSIFY_MESSAGE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Classify a JSON-RPC body</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>DISPATCH_REQUEST</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Route a parsed request to the era dispatcher</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle one wrapped HTTP request</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>HANDLE_OPTIONS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Answer a CORS preflight (OPTIONS)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>METHOD_NOT_ALLOWED</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Send 405 with Allow: POST, OPTIONS</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>ORIGIN_ALLOWED</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether the Origin is allowed for this server</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>PARSE_MCP_PATH</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Extract area + server from the request path</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SEND_JSON_ERROR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Write a JSON-RPC error body with an HTTP status</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_CORS_HEADERS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set CORS response headers for an allowed origin</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_STATUS_FOR_RPC</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Map a JSON-RPC response to an HTTP status</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

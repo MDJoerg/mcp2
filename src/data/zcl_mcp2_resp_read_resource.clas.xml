@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_MCP2_RESP_READ_RESOURCE</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 resources/read response</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>ADD_BLOB_CONTENT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Append a binary (blob) resource-contents block</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>ADD_TEXT_CONTENT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Append a text resource-contents block</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_CACHE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set modern cache hints (ttlMs / cacheScope)</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

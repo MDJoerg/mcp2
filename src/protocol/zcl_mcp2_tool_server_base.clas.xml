@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_MCP2_TOOL_SERVER_BASE</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>MCP2 tool-catalog server base</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>CALL_TOOL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Handle one declared tools/call</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>DEFINE_TOOLS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Declare all tools served by this server</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>FIND_TOOL</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Find one declared tool</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_CATALOG</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get the cached tool catalog</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>TOOL_INPUT_VALIDATION_ENABLED</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Whether catalog schemas validate input</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
