@@ -38,7 +38,7 @@ server-to-server calls send no `Origin` header and are always allowed.
 
 | Feature | Demo behavior | Compatibility lesson |
 | --- | --- | --- |
-| Tools | `echo`, typed `text_stats`, `price_quote`, DDIC schema generation, and `request_info` | One catalog and handler set serves both eras; advertised-schema failures become `isError` tool results in both |
+| Tools | `echo`, `echo_sep2243_mirror`, typed `text_stats`, `price_quote`, DDIC schema generation, and `request_info` | One catalog and handler set serves both eras; advertised-schema failures become `isError` tool results in both |
 | Decimal and array arguments | `price_quote` takes a `decfloat34` unit price, an integer array of quantities and a string array of tags, and returns exact money amounts | `get_arg_number` converts from the raw JSON literal, so 19.99 × 10 is 199.90 rather than a binary-float approximation. Arrays of primitives have typed readers too (`get_arg_string_table`, `get_arg_integer_table`), so no handler here touches raw JSON. Property `title` and `default` are advertised so clients can label and prefill the form |
 | Resources | Lists and reads `mcp2://demo/readme` | The handler uses the era-neutral resource-not-found helper; the dispatcher emits legacy `-32002` or modern `-32602` |
 | Resource templates | Lists `mcp2://demo/greeting/{name}` and reads expanded greeting URIs | A template is not merely metadata: every valid expansion reaches `resources_read` in both eras |
@@ -137,19 +137,21 @@ curl -X POST https://your-host:port/zmcp2/DEMO/BASIC \
         "io.modelcontextprotocol/clientCapabilities":{}}}}'
 ```
 
-`echo` additionally mirrors its `message` argument into `Mcp-Param-Message` because its schema
-annotates the property with `x-mcp-header`. The body stays the source of truth; a missing or
-mismatched header is rejected with `-32020`:
+`echo_sep2243_mirror` is `echo` with its `message` property annotated `x-mcp-header`, so
+SEP-2243 obliges the client to send the value as `Mcp-Param-Message` too. The body stays the
+source of truth; a missing or mismatched header is rejected with `-32020`. Plain `echo` carries
+no annotation on purpose — clients that have not implemented mirroring yet (several v2 alphas
+have not) must still be able to call the first tool in the catalog:
 
 ```bash
 curl -X POST https://your-host:port/zmcp2/DEMO/BASIC \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -H "MCP-Protocol-Version: 2026-07-28" \
-  -H "Mcp-Method: tools/call" -H "Mcp-Name: echo" \
+  -H "Mcp-Method: tools/call" -H "Mcp-Name: echo_sep2243_mirror" \
   -H "Mcp-Param-Message: hi" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{
-        "name":"echo","arguments":{"message":"hi"},"_meta":{
+        "name":"echo_sep2243_mirror","arguments":{"message":"hi"},"_meta":{
         "io.modelcontextprotocol/protocolVersion":"2026-07-28",
         "io.modelcontextprotocol/clientCapabilities":{}}}}'
 ```

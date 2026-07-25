@@ -264,8 +264,9 @@ CLASS zcl_mcp2_demo_wf IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD build_approval_schema.
-    " No x-mcp-header here: header mirroring is demonstrated once, by echo in
-    " ZCL_MCP2_DEMO_BASIC. Keep one concept per example.
+    " No x-mcp-header here: header mirroring is demonstrated once, by
+    " echo_sep2243_mirror in ZCL_MCP2_DEMO_BASIC. Keep one concept per example,
+    " and keep the annotation off tools a client is expected to just call.
     result = NEW zcl_mcp2_schema_builder(
       )->add_string( name        = `request_summary`
                      description = `Short description of what should be approved`

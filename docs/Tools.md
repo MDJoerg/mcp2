@@ -207,6 +207,12 @@ the schema comes from `define_tools`.
 Header names must be case-insensitively unique per tool — reference clients exclude tools
 with conflicting declarations from `tools/list`.
 
+Annotate deliberately. SEP-2243 requires clients to mirror, but not every client does yet, and
+one missing header fails the whole call with `-32020` before your handler runs. Put the
+annotation where routing or inspection actually needs it rather than on tools a client is
+merely expected to call. `ZCL_MCP2_DEMO_BASIC` follows that split: plain `echo` carries no
+annotation, `echo_sep2243_mirror` next to it exists to demonstrate and test mirroring.
+
 ## Long-running work
 
 Return a task instead of a result — see [Tasks](Tasks.md). Gate with the era-aware
