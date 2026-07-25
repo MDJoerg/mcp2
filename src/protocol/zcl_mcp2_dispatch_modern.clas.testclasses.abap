@@ -82,6 +82,8 @@ CLASS ltcl_dispatch_modern DEFINITION FINAL FOR TESTING
     METHODS test_tasks_missing_ext_cap FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_cap_ok        FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_name_hdr_mismatch FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
+    METHODS test_tasks_no_name_hdr_ok  FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
+    METHODS test_tools_call_no_name_hdr FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_cap_false_bad  FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_top_cap_false_bad    FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_lowercase_name FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
@@ -1655,6 +1657,61 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     DATA(resp) = d->dispatch( request      = req
                               header_ver   = zif_mcp2_const=>protocol-v2026_07_28
                               http_request = http ).
+
+    cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>error_codes-header_mismatch
+                                        act = resp-error-code ).
+  ENDMETHOD.
+
+  METHOD test_tasks_no_name_hdr_ok.
+    " The counterpart of test_tasks_name_hdr_mismatch: an omitted Mcp-Name on
+    " tasks/* is accepted. The Tasks extension obliges the CLIENT to send it
+    " for routing affinity, but no spec text obliges a server to reject its
+    " absence, and this SDK reads every task from ZMCP2_TASKS - there is no
+    " instance affinity to protect. tools/call and friends still require it
+    " (test_tools_call_no_name_hdr).
+    DATA req TYPE zcl_mcp2_jsonrpc=>request.
+    req-jsonrpc    = `2.0`.
+    req-method     = zif_mcp2_const=>methods-tasks_get.
+    req-id         = `1`.
+    req-id_present = abap_true.
+    DATA(meta) = modern_params_with_tasks_cap( ).
+    meta->set_string( iv_path = '/taskId' iv_val = `AABBCCDDEEFF00112233445566778899` ).
+    req-params = meta.
+
+    DATA http TYPE REF TO ltcl_mock_request.
+    http = NEW #( ).
+    APPEND zif_mcp2_const=>headers-method TO http->headers.
+    APPEND zif_mcp2_const=>methods-tasks_get TO http->hdr_vals.
+
+    DATA d TYPE REF TO zcl_mcp2_dispatch_modern.
+    d = NEW zcl_mcp2_dispatch_modern( NEW ltcl_task_cap_server( ) ).
+    DATA(resp) = d->dispatch( request      = req
+                              header_ver   = zif_mcp2_const=>protocol-v2026_07_28
+                              http_request = http ).
+
+    cl_abap_unit_assert=>assert_initial( resp-error-code ).
+  ENDMETHOD.
+
+  METHOD test_tools_call_no_name_hdr.
+    " Core transport: Mcp-Name is a required standard header for tools/call,
+    " so a missing one stays -32020 - the leniency above is tasks/* only.
+    DATA req TYPE zcl_mcp2_jsonrpc=>request.
+    req-jsonrpc    = `2.0`.
+    req-method     = zif_mcp2_const=>methods-tools_call.
+    req-id         = `1`.
+    req-id_present = abap_true.
+    DATA(params) = modern_params( ).
+    params->set_string( iv_path = '/name' iv_val = `echo` ).
+    req-params = params.
+
+    DATA http TYPE REF TO ltcl_mock_request.
+    http = NEW #( ).
+    APPEND zif_mcp2_const=>headers-method TO http->headers.
+    APPEND zif_mcp2_const=>methods-tools_call TO http->hdr_vals.
+
+    DATA(resp) = dispatcher->dispatch( request      = req
+                                       header_ver   = zif_mcp2_const=>protocol-v2026_07_28
+                                       http_request = http ).
 
     cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>error_codes-header_mismatch
                                         act = resp-error-code ).

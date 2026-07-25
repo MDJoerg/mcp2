@@ -121,7 +121,7 @@ curl -X POST https://your-host:port/zmcp2/DEMO/BASIC \
 
 The modern era has no handshake, but every request carries `_meta` and mirrors the routing
 fields into headers. `Mcp-Method` is always required; `Mcp-Name` is required for `tools/call`,
-`prompts/get`, `resources/read` and `tasks/*`:
+`prompts/get` and `resources/read`, and is validated when sent on `tasks/*`:
 
 ```bash
 curl -X POST https://your-host:port/zmcp2/DEMO/BASIC \
@@ -223,7 +223,8 @@ retry answering some *other* key returns `isError` so the model can correct itse
   "pollIntervalMs":1000,"createdAt":"…","lastUpdatedAt":"…","ttlMs":null}}
 ```
 
-**3. Client polls** at roughly `pollIntervalMs`, quoting the id in both body and `Mcp-Name`:
+**3. Client polls** at roughly `pollIntervalMs`, quoting the id in the body and, ideally, in
+`Mcp-Name` too:
 
 ```jsonc
 {"method":"tasks/get","params":{"taskId":"35C4DBDA…"}}

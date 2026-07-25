@@ -84,7 +84,7 @@ where feasible.
 | `resources/list`, `resources/read`, `resources/templates/list` | ✅ | |
 | `prompts/list`, `prompts/get` | ✅ | |
 | `completion/complete` | ✅ | |
-| `tasks/get`, `tasks/update`, `tasks/cancel` | ✅ | modern Tasks extension (`io.modelcontextprotocol/tasks`) request/response subset. Shapes are **flat**: `CreateTaskResult = Result & Task` and `GetTaskResult = Result & DetailedTask` — `taskId`/`status`/`createdAt`/`lastUpdatedAt`/`ttlMs`(number\|null)/`pollIntervalMs` plus `result`/`error`/`inputRequests` at the result root, not under a `task` wrapper. `tasks/get` embeds terminal results and pending `inputRequests` (keyed; no `requestState`); `tasks/update` / `tasks/cancel` acknowledge with an empty `complete` result. `tasks/cancel` acks a task already in a terminal state instead of erroring (cooperative). Every `tasks/*` request mirrors `params.taskId` into `Mcp-Name` (validated, mismatch → `-32020`). A create-task result requires the client to have declared the extension in `clientCapabilities.extensions` (else `-32021`) |
+| `tasks/get`, `tasks/update`, `tasks/cancel` | ✅ | modern Tasks extension (`io.modelcontextprotocol/tasks`) request/response subset. Shapes are **flat**: `CreateTaskResult = Result & Task` and `GetTaskResult = Result & DetailedTask` — `taskId`/`status`/`createdAt`/`lastUpdatedAt`/`ttlMs`(number\|null)/`pollIntervalMs` plus `result`/`error`/`inputRequests` at the result root, not under a `task` wrapper. `tasks/get` embeds terminal results and pending `inputRequests` (keyed; no `requestState`); `tasks/update` / `tasks/cancel` acknowledge with an empty `complete` result. `tasks/cancel` acks a task already in a terminal state instead of erroring (cooperative). Every `tasks/*` request should mirror `params.taskId` into `Mcp-Name` (mismatch → `-32020`; an absent header is accepted — the extension makes it a client MUST for routing affinity, but no spec text obliges the server to reject its absence, and task state lives in `zmcp2_tasks` rather than on one app server). A create-task result requires the client to have declared the extension in `clientCapabilities.extensions` (else `-32021`) |
 | `ping` | ❌ | removed from the `2026-07-28` vocabulary; `method_not_found` (`-32601`, HTTP 404) |
 | `logging/setLevel` | ❌ | removed in `2026-07-28` (replaced by `_meta` `io.modelcontextprotocol/logLevel`); `method_not_found` (`-32601`, HTTP 404). No `logging` capability is advertised |
 | `subscriptions/listen` | ❌ | requires a long-lived stream |
@@ -124,7 +124,7 @@ The body is the source of truth; selected fields are mirrored into headers and m
 | --- | --- |
 | `MCP-Protocol-Version` | `_meta` protocol version |
 | `Mcp-Method` | JSON-RPC `method` |
-| `Mcp-Name` | `params.name` (`tools/call`, `prompts/get`), `params.uri` (`resources/read`), or `params.taskId` (`tasks/get`, `tasks/update`, `tasks/cancel`) |
+| `Mcp-Name` | `params.name` (`tools/call`, `prompts/get`) or `params.uri` (`resources/read`) — **required**; `params.taskId` (`tasks/get`, `tasks/update`, `tasks/cancel`) — validated when sent, not required |
 | `Mcp-Param-{Name}` | tool arguments annotated `x-mcp-header = "{Name}"` |
 
 `Mcp-Param-*` supports string/integer/boolean properties that are statically reachable through

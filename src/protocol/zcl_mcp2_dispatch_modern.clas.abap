@@ -648,14 +648,17 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
     " the core transport document, so clients routinely miss it.
     DATA(expected_name) = ``.
     DATA(name_source)   = ``.
+    DATA name_required TYPE abap_bool.
     CASE request-method.
       WHEN zif_mcp2_const=>methods-tools_call
         OR zif_mcp2_const=>methods-prompts_get.
         expected_name = request-params->get_string( '/name' ).
         name_source   = `params.name` ##NO_TEXT.
+        name_required = abap_true.
       WHEN zif_mcp2_const=>methods-resources_read.
         expected_name = request-params->get_string( '/uri' ).
         name_source   = `params.uri` ##NO_TEXT.
+        name_required = abap_true.
       WHEN zif_mcp2_const=>methods-tasks_get
         OR zif_mcp2_const=>methods-tasks_update
         OR zif_mcp2_const=>methods-tasks_cancel.
@@ -664,6 +667,14 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
         " Compare the wire values before the request parser normalizes the UUID
         " for database lookup. Lowercase task ids are therefore valid when both
         " header and body use the same lowercase spelling.
+        " Presence is NOT enforced here: the Tasks extension makes Mcp-Name a
+        " client MUST for tasks/*, but neither it nor the core transport puts a
+        " server under any duty to reject an absent one - the core "required
+        " standard header missing" rule covers tools/call, prompts/get and
+        " resources/read only. The stated purpose is routing affinity, and this
+        " SDK serves every task from ZMCP2_TASKS, so any app server can answer
+        " any tasks/* request. A header that IS sent must still match: a wrong
+        " value is a genuine split-brain risk, an absent one is not.
         expected_name = request-params->get_string( '/taskId' ).
         name_source   = `params.taskId` ##NO_TEXT.
     ENDCASE.
@@ -675,8 +686,11 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
     DATA(header_name) = http_request->get_header( zif_mcp2_const=>headers-name ).
     IF has_header( http_request = http_request
                    header_name  = zif_mcp2_const=>headers-name ) = abap_false.
-      zcx_mcp2_error=>raise_header_mismatch(
-          |Mcp-Name header is required for { request-method } and must carry { name_source }| ) ##NO_TEXT.
+      IF name_required = abap_true.
+        zcx_mcp2_error=>raise_header_mismatch(
+            |Mcp-Name header is required for { request-method } and must carry { name_source }| ) ##NO_TEXT.
+      ENDIF.
+      RETURN.
     ENDIF.
     DATA(decoded_name) = normalize_header_value(
         header_name  = zif_mcp2_const=>headers-name
