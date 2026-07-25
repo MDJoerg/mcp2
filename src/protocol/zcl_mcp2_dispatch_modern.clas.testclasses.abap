@@ -909,13 +909,11 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     DATA(result_json) = zcl_mcp2_ajson=>parse( zcl_mcp2_jsonrpc=>serialize_response( resp ) ).
     DATA(tab) = cl_abap_char_utilities=>horizontal_tab.
     DATA(server_info_path) = '/result/_meta/io.modelcontextprotocol' && tab && 'serverInfo'.
-    " serverInfo is written twice: top-level (kept for every currently
-    " published SDK, whose bundled DiscoverResultSchema still requires it)
-    " and in _meta (ResultMetaObject, the spec-current location).
-    cl_abap_unit_assert=>assert_equals( exp = `ModernServer`
-                                        act = result_json->get_string( '/result/serverInfo/name' ) ).
+    " serverInfo lives in _meta (ResultMetaObject) only; the discover body
+    " carries no top-level serverInfo since the 2026-07-16 schema change.
     cl_abap_unit_assert=>assert_equals( exp = `ModernServer`
                                         act = result_json->get_string( |{ server_info_path }/name| ) ).
+    cl_abap_unit_assert=>assert_false( result_json->exists( '/result/serverInfo' ) ).
     cl_abap_unit_assert=>assert_true( result_json->exists( '/result/supportedVersions' ) ).
     cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>result_types-complete
                                         act = result_json->get_string( '/result/resultType' ) ).
@@ -924,7 +922,6 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>cache_scopes-private
                                         act = result_json->get_string( '/result/cacheScope' ) ).
     " Optional identity fields are omitted when the server provides none.
-    cl_abap_unit_assert=>assert_false( result_json->exists( '/result/serverInfo/title' ) ).
     cl_abap_unit_assert=>assert_false( result_json->exists( |{ server_info_path }/title| ) ).
   ENDMETHOD.
 
@@ -946,18 +943,8 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     DATA(result_json) = zcl_mcp2_ajson=>parse( zcl_mcp2_jsonrpc=>serialize_response( resp ) ).
     DATA(tab) = cl_abap_char_utilities=>horizontal_tab.
     DATA(server_info_path) = '/result/_meta/io.modelcontextprotocol' && tab && 'serverInfo'.
-    " Top-level (SDK compat).
-    cl_abap_unit_assert=>assert_equals( exp = `Ident Server`
-                                        act = result_json->get_string( '/result/serverInfo/title' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `Serves identity fields for tests.`
-                                        act = result_json->get_string( '/result/serverInfo/description' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `https://example.com/ident`
-                                        act = result_json->get_string( '/result/serverInfo/websiteUrl' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `https://example.com/ident.png`
-                                        act = result_json->get_string( '/result/serverInfo/icons/1/src' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `light`
-                                        act = result_json->get_string( '/result/serverInfo/icons/1/theme' ) ).
-    " _meta (spec-current location).
+    " _meta is the only identity location in the modern era.
+    cl_abap_unit_assert=>assert_false( result_json->exists( '/result/serverInfo' ) ).
     cl_abap_unit_assert=>assert_equals( exp = `Ident Server`
                                         act = result_json->get_string( |{ server_info_path }/title| ) ).
     cl_abap_unit_assert=>assert_equals( exp = `Serves identity fields for tests.`

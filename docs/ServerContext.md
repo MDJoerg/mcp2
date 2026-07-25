@@ -33,10 +33,9 @@ ENDMETHOD.
 ```
 
 `get_title`, `get_description`, `get_website_url` and `get_icons` populate `serverInfo` — a
-top-level `initialize` result field in the legacy eras, and (deliberately, in both the top-level
-`server/discover` field and `_meta["io.modelcontextprotocol/serverInfo"]` on every modern-era
-result) since the 2026-07-16 schema change — see `ProtocolSupport.md` for why the top-level
-modern field stays until SDKs catch up.
+top-level `initialize` result field in the legacy eras, and
+`_meta["io.modelcontextprotocol/serverInfo"]` on every modern-era result since the 2026-07-16
+schema change — see `ProtocolSupport.md`.
 `get_instructions` is a server-wide hint to the client/model; keep security checks and business
 rules in ABAP because clients are not required to enforce instructions.
 

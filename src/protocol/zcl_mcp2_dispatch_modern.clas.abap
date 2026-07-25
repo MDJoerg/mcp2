@@ -67,9 +67,9 @@ CLASS zcl_mcp2_dispatch_modern DEFINITION PUBLIC FINAL CREATE PUBLIC.
       RETURNING VALUE(result) TYPE abap_bool.
 
     "! <p class="shorttext synchronized">Handle server/discover</p>
-    "! Server identity (serverInfo) is written both top-level (SDK compat)
-    "! and, by the caller via stamp_server_info, into _meta (spec-current).
-    "! @parameter result | discover result (versions, caps, serverInfo, hints)
+    "! Server identity is not part of the discover body; the caller writes it
+    "! into _meta via stamp_server_info, like on every other modern result.
+    "! @parameter result | discover result (versions, caps, hints)
     "! @raising zcx_mcp2_ajson_error | JSON build/parse failure
     METHODS handle_discover
       RETURNING VALUE(result) TYPE REF TO zif_mcp2_ajson
@@ -692,44 +692,10 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
   METHOD handle_discover.
     result = zcl_mcp2_ajson=>create_empty( ).
 
-    " Server identity is written twice, deliberately:
-    " - top-level /serverInfo/... : removed from the schema on 2026-07-28
-    "   (2026-07-16 change), but every currently published TypeScript v2 SDK
-    "   release (through 2.0.0-beta.4) bundles its own DiscoverResultSchema
-    "   with serverInfo still REQUIRED. Omitting it makes the SDK's own
-    "   client.connect() version-negotiation probe fail its result validation
-    "   and misclassify the server as non-modern - breaking every SDK-based
-    "   modern test, not just serverInfo assertions. The schema no longer
-    "   forbids extra top-level properties (no additionalProperties: false
-    "   here), so this remains draft-conformant.
-    " - _meta.serverInfo (stamp_server_info, called by the caller) : the new
-    "   spec-conformant location (ResultMetaObject), shared by every modern
-    "   result, not just discover.
-    " Drop the top-level write once a released SDK reads serverInfo from
-    " _meta for the modern era.
-    result->set_string( iv_path = '/serverInfo/name'
-                        iv_val  = server->get_name( ) ).
-    result->set_string( iv_path = '/serverInfo/version'
-                        iv_val  = server->get_version( ) ).
-    DATA(title) = server->get_title( ).
-    IF title IS NOT INITIAL.
-      result->set_string( iv_path = '/serverInfo/title'
-                          iv_val  = title ).
-    ENDIF.
-    DATA(description) = server->get_description( ).
-    IF description IS NOT INITIAL.
-      result->set_string( iv_path = '/serverInfo/description'
-                          iv_val  = description ).
-    ENDIF.
-    DATA(website_url) = server->get_website_url( ).
-    IF website_url IS NOT INITIAL.
-      result->set_string( iv_path = '/serverInfo/websiteUrl'
-                          iv_val  = website_url ).
-    ENDIF.
-    zcl_mcp2_icons=>emit( json  = result
-                          path  = '/serverInfo/icons'
-                          icons = server->get_icons( ) ).
-
+    " Server identity is not written here. The 2026-07-16 schema change moved
+    " it out of the discover body into _meta.io.modelcontextprotocol/serverInfo
+    " (ResultMetaObject), where stamp_server_info writes it for every modern
+    " result, discover included.
     DATA(instructions) = server->get_instructions( ).
     IF instructions IS NOT INITIAL.
       result->set_string( iv_path = '/instructions'

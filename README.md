@@ -92,16 +92,10 @@ so notification- and subscription-based features are out of scope by design (see
   builder) because it is the only key-less LLM access path from ABAP.
 - **Request context without `_meta` parsing** — client identity, negotiated protocol,
   log-level hints and W3C trace context are available through typed base-class getters.
-- **`serverInfo` is written twice in the modern era — deliberately.** The `2026-07-28` draft
-  moved `serverInfo` out of the top-level result and into
-  `_meta["io.modelcontextprotocol/serverInfo"]` (the `ResultMetaObject` shape) on 2026-07-16, so
-  the SDK emits it there on **every** modern result. It *also* still writes the superseded
-  top-level field on `server/discover`, because every published TypeScript v2 SDK release
-  (through `2.0.0-beta.4`) bundles a `DiscoverResultSchema` that requires it — omit it and the
-  SDK's own `client.connect()` version-negotiation probe misclassifies the server as non-modern,
-  silently downgrading real clients to the legacy era. Writing both costs a few bytes and keeps
-  the SDK correct against the spec *and* usable by the clients that exist today. The top-level
-  write is scheduled for removal once a released SDK reads `_meta` instead
+- **`serverInfo` lives in `_meta` in the modern era.** The `2026-07-28` draft moved `serverInfo`
+  out of the top-level result and into `_meta["io.modelcontextprotocol/serverInfo"]` (the
+  `ResultMetaObject` shape) on 2026-07-16, so the SDK emits it there on **every** modern result,
+  `server/discover` included, and nowhere else
   ([details](docs/ProtocolSupport.md#caching--discovery)). Legacy `initialize` is unaffected:
   `serverInfo` stays a plain top-level field there.
 - **Conversion in the data class** — explicit per-field JSON↔ABAP; central code only for the

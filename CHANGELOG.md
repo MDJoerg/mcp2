@@ -9,6 +9,20 @@ The SDK version is available at runtime as `zif_mcp2_const=>sdk_version`. It is 
 the MCP protocol version (`zif_mcp2_const=>protocol`) and of the version your own server reports
 via `get_version( )`.
 
+## Unreleased
+
+### Protocol (breaking, wire only)
+
+- `server/discover` no longer writes the superseded top-level `serverInfo` field. Modern server
+  identity is now emitted only in `_meta["io.modelcontextprotocol/serverInfo"]`, on every modern
+  result, which is where the `2026-07-28` draft put it on 2026-07-16. The top-level write existed
+  because every published TypeScript v2 SDK up to `2.0.0-beta.4` bundled a `DiscoverResultSchema`
+  that required it; `2.0.0-beta.5` (2026-07-21) reads `_meta` instead, so the workaround is gone.
+  Clients pinned to `2.0.0-beta.4` or earlier will misclassify the server as non-modern — upgrade
+  them. Legacy `initialize` is unchanged: `serverInfo` stays a top-level result field there.
+  No ABAP API change; `get_title` / `get_description` / `get_website_url` / `get_icons` behave
+  exactly as before.
+
 ## 0.1.0 — first beta - 2026-07-19
 
 First beta of the v2 SDK. This is a from-scratch rewrite of the ABAP MCP server SDK, not an

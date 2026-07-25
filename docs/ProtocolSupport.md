@@ -79,7 +79,7 @@ where feasible.
 
 | Method | Supported | Notes |
 | --- | --- | --- |
-| `server/discover` | ✅ | returns `supportedVersions`, capabilities, instructions, cache hints; `resultType = complete`. `serverInfo` is written both top-level and in `_meta` (see below) |
+| `server/discover` | ✅ | returns `supportedVersions`, capabilities, instructions, cache hints; `resultType = complete`. `serverInfo` is carried in `_meta`, not in the result body (see below) |
 | `tools/list`, `tools/call` | ✅ | `tools/call` may return `inputRequired` (MRTR); advertised-`inputSchema` violations return `isError` tool results |
 | `resources/list`, `resources/read`, `resources/templates/list` | ✅ | |
 | `prompts/list`, `prompts/get` | ✅ | |
@@ -163,15 +163,10 @@ cannot accidentally become publicly cacheable.
 
 `serverInfo` carries optional `title`, `description`, and `websiteUrl` in both eras when the
 server overrides `get_title` / `get_description` / `get_website_url`. Legacy keeps it as a
-top-level `initialize` result field, unchanged. The modern era writes it in **two** places on
-every result (not discover-only), deliberately: a top-level `serverInfo` field (`server/discover`
-only — this is the pre-2026-07-16 shape) and `_meta["io.modelcontextprotocol/serverInfo"]` (every
-modern result, the `ResultMetaObject` shape the draft moved to on 2026-07-16). The top-level
-field is technically superseded by `_meta`, but every currently published TypeScript v2 SDK
-release (through `2.0.0-beta.4`) bundles a `DiscoverResultSchema` that still requires it —
-omitting it makes the SDK's own `client.connect()` version-negotiation probe misclassify the
-server as non-modern. Drop the top-level write once a released SDK reads `_meta` for the modern
-era instead.
+top-level `initialize` result field, unchanged. The modern era has exactly one location for it:
+`_meta["io.modelcontextprotocol/serverInfo"]`, the `ResultMetaObject` shape the draft moved to on
+2026-07-16. It is stamped on **every** modern result, not just `server/discover`, and the
+discover result carries no top-level `serverInfo`.
 
 The `2026-07-28` draft recommends returning `tools/list` in a deterministic order so results
 stay cache-friendly. The SDK preserves the order in which tools are declared (`define_tools`
