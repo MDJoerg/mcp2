@@ -642,13 +642,20 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
           |Mcp-Method header '{ header_method }' does not match method '{ request-method }'| ) ##NO_TEXT.
     ENDIF.
 
+    " name_source names the body field the header has to carry. It is part of
+    " every Mcp-Name error message: which field feeds the header differs per
+    " method, and for tasks/* the rule lives in the Tasks extension rather than
+    " the core transport document, so clients routinely miss it.
     DATA(expected_name) = ``.
+    DATA(name_source)   = ``.
     CASE request-method.
       WHEN zif_mcp2_const=>methods-tools_call
         OR zif_mcp2_const=>methods-prompts_get.
         expected_name = request-params->get_string( '/name' ).
+        name_source   = `params.name` ##NO_TEXT.
       WHEN zif_mcp2_const=>methods-resources_read.
         expected_name = request-params->get_string( '/uri' ).
+        name_source   = `params.uri` ##NO_TEXT.
       WHEN zif_mcp2_const=>methods-tasks_get
         OR zif_mcp2_const=>methods-tasks_update
         OR zif_mcp2_const=>methods-tasks_cancel.
@@ -658,6 +665,7 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
         " for database lookup. Lowercase task ids are therefore valid when both
         " header and body use the same lowercase spelling.
         expected_name = request-params->get_string( '/taskId' ).
+        name_source   = `params.taskId` ##NO_TEXT.
     ENDCASE.
 
     IF expected_name IS INITIAL.
@@ -667,14 +675,15 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
     DATA(header_name) = http_request->get_header( zif_mcp2_const=>headers-name ).
     IF has_header( http_request = http_request
                    header_name  = zif_mcp2_const=>headers-name ) = abap_false.
-      zcx_mcp2_error=>raise_header_mismatch( `Mcp-Name header is required` ) ##NO_TEXT.
+      zcx_mcp2_error=>raise_header_mismatch(
+          |Mcp-Name header is required for { request-method } and must carry { name_source }| ) ##NO_TEXT.
     ENDIF.
     DATA(decoded_name) = normalize_header_value(
         header_name  = zif_mcp2_const=>headers-name
         header_value = header_name ).
     IF decoded_name <> expected_name.
       zcx_mcp2_error=>raise_header_mismatch(
-          |Mcp-Name header '{ header_name }' does not match request name '{ expected_name }'| ) ##NO_TEXT.
+          |Mcp-Name header '{ header_name }' does not match { name_source } '{ expected_name }'| ) ##NO_TEXT.
     ENDIF.
   ENDMETHOD.
 
