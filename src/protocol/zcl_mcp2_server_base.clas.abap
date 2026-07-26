@@ -132,8 +132,8 @@ CLASS zcl_mcp2_server_base DEFINITION
       RETURNING VALUE(result) TYPE string.
 
   PROTECTED SECTION.
-    "! A freshly started task: the id for the background unit plus the
-    "! era-appropriate create-task result to return from the handler.
+    " A freshly started task: the id for the background unit plus the
+    " era-appropriate create-task result to return from the handler.
     TYPES: BEGIN OF task_start,
              task_id TYPE sysuuid_c32,
              result  TYPE REF TO zif_mcp2_result,
@@ -495,7 +495,7 @@ CLASS zcl_mcp2_server_base IMPLEMENTATION.
           IF row-status_message IS NOT INITIAL.
             error_message = row-status_message.
           ELSE.
-            error_message = `Task failed`.
+            error_message = `Task failed`  ##NO_TEXT.
           ENDIF.
           RAISE EXCEPTION NEW zcx_mcp2_error(
             error_code = row-error_code

@@ -205,11 +205,11 @@ CLASS ltcl_ident_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_title.
-    result = `Ident Server`.
+    result = `Ident Server`  ##NO_TEXT.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_description.
-    result = `Serves identity fields for tests.`.
+    result = `Serves identity fields for tests.`  ##NO_TEXT.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_website_url.
@@ -263,7 +263,7 @@ CLASS ltcl_tool_server IMPLEMENTATION.
 
   METHOD zif_mcp2_server~get_tool_schema.
     result = zcl_mcp2_ajson=>parse(
-      `{"type":"object","properties":{"outer":{"type":"object","properties":{"inner":{"type":"string","x-mcp-header":"Inner"}}}}}` ).
+      `{"type":"object","properties":{"outer":{"type":"object","properties":{"inner":{"type":"string","x-mcp-header":"Inner"}}}}}` )  ##NO_TEXT.
   ENDMETHOD.
 ENDCLASS.
 
@@ -367,7 +367,7 @@ CLASS ltcl_ir_url_server IMPLEMENTATION.
 
     input = NEW zcl_mcp2_input_elicitation( ).
     input->set_url( message = `Authorize`
-                    url     = `https://example.com/authorize` ).
+                    url     = `https://example.com/authorize` )  ##NO_TEXT.
     ir = NEW zcl_mcp2_resp_input_req( ).
     ir->set_request_state( `url-state` ).
     ir->add_request( request_key = `auth`
@@ -403,7 +403,7 @@ CLASS ltcl_ir_form_server IMPLEMENTATION.
     DATA ir    TYPE REF TO zcl_mcp2_resp_input_req.
 
     input = NEW zcl_mcp2_input_elicitation( ).
-    input->set_form( `Confirm?` ).
+    input->set_form( `Confirm?` )  ##NO_TEXT.
     ir = NEW zcl_mcp2_resp_input_req( ).
     ir->add_request( request_key = `confirm`
                      input       = input ).
@@ -588,7 +588,7 @@ CLASS ltcl_schema_oneof_srv IMPLEMENTATION.
   METHOD zif_mcp2_server~get_tool_schema.
     " x-mcp-header nested inside oneOf - must be rejected per spec
     result = zcl_mcp2_ajson=>parse(
-      `{"type":"object","properties":{"p":{"oneOf":[{"type":"string","x-mcp-header":"Bad"}]}}}` ).
+      `{"type":"object","properties":{"p":{"oneOf":[{"type":"string","x-mcp-header":"Bad"}]}}}` )  ##NO_TEXT.
   ENDMETHOD.
 ENDCLASS.
 
@@ -640,7 +640,7 @@ CLASS ltcl_hdr_test_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_tool_schema.
-    result = zcl_mcp2_ajson=>parse( `{"type":"object","properties":{"p":{"type":"string","x-mcp-header":"P"}}}` ).
+    result = zcl_mcp2_ajson=>parse( `{"type":"object","properties":{"p":{"type":"string","x-mcp-header":"P"}}}` )  ##NO_TEXT.
   ENDMETHOD.
 ENDCLASS.
 

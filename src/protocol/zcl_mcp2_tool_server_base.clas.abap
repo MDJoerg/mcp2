@@ -3,25 +3,25 @@
 "! Subclasses declare the tool catalog once and implement call_tool; this base
 "! derives tools/list, get_tool_schema, supports_tools and validation policy.
 CLASS zcl_mcp2_tool_server_base DEFINITION
-  PUBLIC ABSTRACT
-  INHERITING FROM zcl_mcp2_server_base
+  PUBLIC
+  INHERITING FROM zcl_mcp2_server_base ABSTRACT
   CREATE PUBLIC.
 
   PUBLIC SECTION.
-    METHODS zif_mcp2_server~supports_tools REDEFINITION.
-    METHODS zif_mcp2_server~tools_list REDEFINITION.
-    METHODS zif_mcp2_server~tools_call REDEFINITION.
-    METHODS zif_mcp2_server~get_tool_schema REDEFINITION.
+    METHODS zif_mcp2_server~supports_tools      REDEFINITION.
+    METHODS zif_mcp2_server~tools_list          REDEFINITION.
+    METHODS zif_mcp2_server~tools_call          REDEFINITION.
+    METHODS zif_mcp2_server~get_tool_schema     REDEFINITION.
     METHODS zif_mcp2_server~validate_tool_input REDEFINITION.
 
   PROTECTED SECTION.
-    TYPES tool TYPE zcl_mcp2_resp_list_tools=>tool.
+    TYPES tool      TYPE zcl_mcp2_resp_list_tools=>tool.
     TYPES tool_list TYPE zcl_mcp2_resp_list_tools=>tool_list.
 
     "! <p class="shorttext synchronized">Declare all tools served by this server</p>
     "! The returned metadata is used for tools/list, schema lookup, header
     "! mirroring and argument validation.
-    "! @parameter result              | Tool catalog
+    "! @parameter result               | Tool catalog
     "! @raising   zcx_mcp2_ajson_error | JSON schema build failure
     METHODS define_tools ABSTRACT
       RETURNING VALUE(result) TYPE tool_list
@@ -29,8 +29,8 @@ CLASS zcl_mcp2_tool_server_base DEFINITION
 
     "! <p class="shorttext synchronized">Handle one declared tools/call</p>
     "! Called only after the requested tool name exists in define_tools.
-    "! @parameter request             | Parsed tools/call request
-    "! @parameter result              | Tool, input_required or task result
+    "! @parameter request              | Parsed tools/call request
+    "! @parameter result               | Tool, input_required or task result
     "! @raising   zcx_mcp2_error       | Protocol or application error
     "! @raising   zcx_mcp2_ajson_error | JSON build/parse failure
     METHODS call_tool ABSTRACT
@@ -47,7 +47,7 @@ CLASS zcl_mcp2_tool_server_base DEFINITION
       RETURNING VALUE(result) TYPE abap_bool.
 
   PRIVATE SECTION.
-    DATA tool_catalog TYPE tool_list.
+    DATA tool_catalog   TYPE tool_list.
     DATA catalog_loaded TYPE abap_bool.
 
     "! <p class="shorttext synchronized">Lazily build and cache the tool catalog</p>
@@ -63,9 +63,9 @@ CLASS zcl_mcp2_tool_server_base DEFINITION
     "! @parameter tool                 | The matching tool, or cleared when not found
     "! @raising   zcx_mcp2_ajson_error | JSON schema build failure
     METHODS find_tool
-      IMPORTING tool_name     TYPE string
-      EXPORTING found         TYPE abap_bool
-                tool          TYPE tool
+      IMPORTING tool_name TYPE string
+      EXPORTING !found    TYPE abap_bool
+                tool      TYPE tool
       RAISING   zcx_mcp2_ajson_error.
 
 ENDCLASS.
@@ -89,14 +89,13 @@ CLASS zcl_mcp2_tool_server_base IMPLEMENTATION.
 
   METHOD zif_mcp2_server~tools_call.
     DATA found TYPE abap_bool.
-    DATA tool TYPE tool.
+    DATA tool  TYPE tool.
 
     find_tool( EXPORTING tool_name = request->get_name( )
-               IMPORTING found = found
-                         tool  = tool ).
+               IMPORTING found     = found
+                         tool      = tool ).
     IF found = abap_false.
-      zcx_mcp2_error=>raise_invalid_params(
-        |Unknown tool: { request->get_name( ) }| ) ##NO_TEXT.
+      zcx_mcp2_error=>raise_invalid_params( |Unknown tool: { request->get_name( ) }| ) ##NO_TEXT.
     ENDIF.
 
     result = call_tool( request ).
@@ -104,11 +103,11 @@ CLASS zcl_mcp2_tool_server_base IMPLEMENTATION.
 
   METHOD zif_mcp2_server~get_tool_schema.
     DATA found TYPE abap_bool.
-    DATA tool TYPE tool.
+    DATA tool  TYPE tool.
 
     find_tool( EXPORTING tool_name = tool_name
-               IMPORTING found = found
-                         tool  = tool ).
+               IMPORTING found     = found
+                         tool      = tool ).
     IF found = abap_true.
       result = tool-input_schema.
     ENDIF.

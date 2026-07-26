@@ -80,7 +80,7 @@ CLASS ltcl_ident_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_title.
-    result = `Ident Server`.
+    result = `Ident Server` ##NO_TEXT.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_website_url.

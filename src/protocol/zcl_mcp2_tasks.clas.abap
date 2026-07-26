@@ -337,7 +337,7 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
       IF id_txt IS INITIAL.
         cursor_task_id = 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'.
       ELSE.
-        FIND REGEX `^[0-9A-Fa-f]{32}$` IN id_txt.
+        FIND REGEX `^[0-9A-Fa-f]{32}$` IN id_txt  ##NO_TEXT.
         IF sy-subrc <> 0.
           zcx_mcp2_error=>raise_invalid_params( `Invalid cursor` ) ##NO_TEXT.
         ENDIF.

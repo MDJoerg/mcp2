@@ -26,12 +26,12 @@
     <SEOCOMPOTX>
      <CMPNAME>FIND_TOOL</CMPNAME>
      <LANGU>E</LANGU>
-     <DESCRIPT>Find one declared tool</DESCRIPT>
+     <DESCRIPT>Find a tool by name in the catalog</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CMPNAME>GET_CATALOG</CMPNAME>
      <LANGU>E</LANGU>
-     <DESCRIPT>Get the cached tool catalog</DESCRIPT>
+     <DESCRIPT>Lazily build and cache the tool catalog</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CMPNAME>TOOL_INPUT_VALIDATION_ENABLED</CMPNAME>
