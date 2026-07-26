@@ -30,6 +30,10 @@ CLASS zcl_mcp2_demo_basic DEFINITION
     " cannot drift apart.
     CONSTANTS: BEGIN OF tool_names,
                  echo        TYPE string VALUE `echo`,
+                 " The SEP number is in the tool name on purpose: a client that
+                 " has not implemented header mirroring yet gets -32020 here,
+                 " and the name tells whoever reads the error where to look.
+                 echo_mirror TYPE string VALUE `echo_sep2243_mirror`,
                  text_stats  TYPE string VALUE `text_stats`,
                  price_quote TYPE string VALUE `price_quote`,
                  ddic_schema TYPE string VALUE `ddic_schema`,
@@ -68,9 +72,21 @@ CLASS zcl_mcp2_demo_basic DEFINITION
            END OF request_info_result.
 
     "! <p class="shorttext synchronized">Build the input schema for the echo tool</p>
+    "! Deliberately without x-mcp-header, so the first tool anyone tries works
+    "! with clients that do not mirror parameters yet - see build_echo_mirror_schema.
     "! @parameter result | JSON Schema for the echo tool arguments
     "! @raising zcx_mcp2_ajson_error | JSON build/parse failure
     METHODS build_echo_schema
+      RETURNING VALUE(result) TYPE REF TO zif_mcp2_ajson
+      RAISING   zcx_mcp2_ajson_error.
+
+    "! <p class="shorttext synchronized">Build the input schema for echo_sep2243_mirror</p>
+    "! Annotates message with x-mcp-header, so SEP-2243 obliges the client to
+    "! send Mcp-Param-Message alongside the body. The dispatcher rejects a call
+    "! that carries the argument without the header with -32020 HeaderMismatch.
+    "! @parameter result | JSON Schema for the echo_sep2243_mirror arguments
+    "! @raising zcx_mcp2_ajson_error | JSON build/parse failure
+    METHODS build_echo_mirror_schema
       RETURNING VALUE(result) TYPE REF TO zif_mcp2_ajson
       RAISING   zcx_mcp2_ajson_error.
 
@@ -197,7 +213,9 @@ CLASS zcl_mcp2_demo_basic IMPLEMENTATION.
 
   METHOD zif_mcp2_server~get_instructions.
     result = `Start with request_info to see which protocol era was negotiated. ` &&
-             `Then try echo, text_stats, ddic_schema, resources, prompts, and completions.` ##NO_TEXT.
+             `Then try echo, text_stats, ddic_schema, resources, prompts, and completions. ` &&
+             `echo_sep2243_mirror additionally requires the Mcp-Param-Message header and only ` &&
+             `works with clients that implement SEP-2243 header mirroring.` ##NO_TEXT.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_discover_cache.
@@ -237,8 +255,15 @@ CLASS zcl_mcp2_demo_basic IMPLEMENTATION.
     result = VALUE #(
         ( name         = tool_names-echo
           title        = `Echo`
-          description  = `Returns the message argument and mirrors it through Mcp-Param-Message.`
+          description  = `Returns the message argument unchanged.`
           input_schema = build_echo_schema( )
+          annotations  = read_only )
+        ( name         = tool_names-echo_mirror
+          title        = `Echo with SEP-2243 header mirroring`
+          description  = `Like echo, but the message argument is annotated with x-mcp-header, so the ` &&
+                         `client must also send it as the Mcp-Param-Message header (SEP-2243). ` &&
+                         `Calling it without that header is answered with -32020 HeaderMismatch.`
+          input_schema = build_echo_mirror_schema( )
           annotations  = read_only )
         ( name          = tool_names-text_stats
           title         = `Text statistics`
@@ -269,7 +294,11 @@ CLASS zcl_mcp2_demo_basic IMPLEMENTATION.
     " The base class rejects names outside define_tools before this runs and
     " validates the arguments against the declared input schema.
     CASE request->get_name( ).
-      WHEN tool_names-echo.
+      WHEN tool_names-echo
+        OR tool_names-echo_mirror.
+        " Same handler: the two tools differ only in their declared schema.
+        " Header mirroring is validated by the dispatcher before dispatch, so
+        " a handler never has to look at Mcp-Param-* itself.
         result = handle_echo( request ).
       WHEN tool_names-text_stats.
         result = handle_text_stats( request ).
@@ -494,8 +523,20 @@ CLASS zcl_mcp2_demo_basic IMPLEMENTATION.
 
   METHOD build_echo_schema.
     result = NEW zcl_mcp2_schema_builder(
+      )->add_string( name        = `message`
+                     description = `Message to echo`
+      )->to_json( ) ##NO_TEXT.
+  ENDMETHOD.
+
+  METHOD build_echo_mirror_schema.
+    " x-mcp-header names the suffix only: `Message` produces Mcp-Param-Message.
+    " SEP-2243 makes mirroring mandatory for clients whenever a server declares
+    " it, so a client that sends the argument in the body but omits the header
+    " is non-conforming and the server MUST reject the call. Keep this on its
+    " own tool: it is a conformance surface, not something every tool needs.
+    result = NEW zcl_mcp2_schema_builder(
       )->add_string( name         = `message`
-                     description  = `Message to echo`
+                     description  = `Message to echo - must also be sent as the Mcp-Param-Message header`
                      x_mcp_header = `Message`
       )->to_json( ) ##NO_TEXT.
   ENDMETHOD.

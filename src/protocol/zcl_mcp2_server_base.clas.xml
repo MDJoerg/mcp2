@@ -12,6 +12,33 @@
     <UNICODE>X</UNICODE>
     <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
    </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>BUILD_TASK_RESULT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Era-appropriate create-task result from a row</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>CAN_REQUEST_INPUT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>True when the client can answer this MRTR input</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_TASKS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>The task store scoped to this server</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>INPUT_REQUIRED</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Build a single-input MRTR response</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>START_TASK</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Start a background task (one call)</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>

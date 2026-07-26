@@ -155,7 +155,7 @@ CLASS zcl_mcp2_demo_wf IMPLEMENTATION.
     SUBMIT zmcp2_demo_task
       WITH p_task = task_id
       VIA JOB job_name NUMBER job_count
-      AND RETURN.
+      AND RETURN. "#EC CI_SUBMIT
     IF sy-subrc <> 0.
       zcl_mcp2_tasks=>fail( task_id = task_id
                             message = `Could not add demo report to background job` ) ##NO_TEXT.
@@ -264,8 +264,9 @@ CLASS zcl_mcp2_demo_wf IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD build_approval_schema.
-    " No x-mcp-header here: header mirroring is demonstrated once, by echo in
-    " ZCL_MCP2_DEMO_BASIC. Keep one concept per example.
+    " No x-mcp-header here: header mirroring is demonstrated once, by
+    " echo_sep2243_mirror in ZCL_MCP2_DEMO_BASIC. Keep one concept per example,
+    " and keep the annotation off tools a client is expected to just call.
     result = NEW zcl_mcp2_schema_builder(
       )->add_string( name        = `request_summary`
                      description = `Short description of what should be approved`

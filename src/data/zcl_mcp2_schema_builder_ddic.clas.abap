@@ -151,8 +151,12 @@ CLASS zcl_mcp2_schema_builder_ddic IMPLEMENTATION.
 
   METHOD process_structure.
     DATA fields TYPE ddfields.
+    " Explicitly typed instead of CONV #( ): the downport cannot infer the
+    " target type from the interface parameter and emits TYPE undefined.
+    DATA ddic_name TYPE ddobjname.
+    ddic_name = structure_name.
     TRY.
-        fields = ddic->get_structure_fields( CONV #( structure_name ) ).
+        fields = ddic->get_structure_fields( ddic_name ).
       CATCH zcx_mcp2_ddic_error.
         zcx_mcp2_ddic_error=>raise( |Structure not found: { structure_name }| ) ##NO_TEXT.
     ENDTRY.

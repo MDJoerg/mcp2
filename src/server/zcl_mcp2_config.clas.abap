@@ -44,9 +44,18 @@ CLASS zcl_mcp2_config IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_allowed_origins.
+    " Host variables that share a name with a column of the addressed table are
+    " read as that column once the downport drops the @ escape - WHERE area =
+    " area would then match every row and hand out foreign origins. The
+    " differently named locals also carry the column type into the comparison.
+    DATA area_arg   TYPE zmcp2_origins-area.
+    DATA server_arg TYPE zmcp2_origins-server.
+    area_arg   = area.
+    server_arg = server.
+
     SELECT origin FROM zmcp2_origins
-      WHERE area   = @area
-        AND server = @server
+      WHERE area   = @area_arg
+        AND server = @server_arg
       ORDER BY PRIMARY KEY
       INTO TABLE @result.
     IF sy-subrc = 0.
@@ -54,7 +63,7 @@ CLASS zcl_mcp2_config IMPLEMENTATION.
     ENDIF.
 
     SELECT origin FROM zmcp2_origins
-      WHERE area   = @area
+      WHERE area   = @area_arg
         AND server = '*'
       ORDER BY PRIMARY KEY
       INTO TABLE @result.
@@ -64,7 +73,7 @@ CLASS zcl_mcp2_config IMPLEMENTATION.
 
     SELECT origin FROM zmcp2_origins
       WHERE area   = '*'
-        AND server = @server
+        AND server = @server_arg
       ORDER BY PRIMARY KEY
       INTO TABLE @result.
     IF sy-subrc = 0.

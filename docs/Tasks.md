@@ -124,8 +124,10 @@ The modern create-task result (`tools/call` → `resultType: "task"`) is likewis
 (`CreateTaskResult = Result & Task`): `taskId`, `status`, `createdAt`, `lastUpdatedAt` and
 `ttlMs` sit at the result root, not under a `task` wrapper. `ttlMs` is always present —
 the millisecond value, or `null` for an unlimited task. On the modern transport the client
-also mirrors `params.taskId` into the `Mcp-Name` header on every `tasks/*` request (the
-dispatcher validates it, mismatch → `-32020`).
+should also mirror `params.taskId` into the `Mcp-Name` header on every `tasks/*` request, so
+intermediaries can route by task affinity. The dispatcher validates a header that is sent
+(mismatch → `-32020`) but does not require one: the extension puts that MUST on the client, not
+on the server, and this SDK reads every task from `zmcp2_tasks` — no app-server affinity to keep.
 
 Status lifecycle: `working` → `completed` / `failed` / `cancelled`, plus
 `input_required` ↔ `working` for interactive tasks. Illegal transitions are rejected, and

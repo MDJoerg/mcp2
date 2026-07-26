@@ -177,7 +177,8 @@ request for header mirroring. The SDK's own testclasses use exactly these patter
 Two ready-to-register demo implementations ship with the SDK:
 
 - `ZCL_MCP2_DEMO_BASIC` — a `request_info` tool that makes compatibility context visible,
-  an echo tool with header mirroring, a `text_stats` tool showing
+  an `echo` tool plus `echo_sep2243_mirror` demonstrating header mirroring,
+  a `text_stats` tool showing
   `bind_arguments` and structured output, a `ddic_schema` tool showing the
   [DDIC schema builder](Schemas.md), a static resource, a readable resource template, a prompt,
   and completions.

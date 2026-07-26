@@ -82,6 +82,8 @@ CLASS ltcl_dispatch_modern DEFINITION FINAL FOR TESTING
     METHODS test_tasks_missing_ext_cap FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_cap_ok        FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_name_hdr_mismatch FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
+    METHODS test_tasks_no_name_hdr_ok  FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
+    METHODS test_tools_call_no_name_hdr FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_cap_false_bad  FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_top_cap_false_bad    FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
     METHODS test_tasks_lowercase_name FOR TESTING RAISING zcx_mcp2_error zcx_mcp2_ajson_error.
@@ -203,11 +205,11 @@ CLASS ltcl_ident_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_title.
-    result = `Ident Server`.
+    result = `Ident Server`  ##NO_TEXT.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_description.
-    result = `Serves identity fields for tests.`.
+    result = `Serves identity fields for tests.`  ##NO_TEXT.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_website_url.
@@ -261,7 +263,7 @@ CLASS ltcl_tool_server IMPLEMENTATION.
 
   METHOD zif_mcp2_server~get_tool_schema.
     result = zcl_mcp2_ajson=>parse(
-      `{"type":"object","properties":{"outer":{"type":"object","properties":{"inner":{"type":"string","x-mcp-header":"Inner"}}}}}` ).
+      `{"type":"object","properties":{"outer":{"type":"object","properties":{"inner":{"type":"string","x-mcp-header":"Inner"}}}}}` )  ##NO_TEXT.
   ENDMETHOD.
 ENDCLASS.
 
@@ -365,7 +367,7 @@ CLASS ltcl_ir_url_server IMPLEMENTATION.
 
     input = NEW zcl_mcp2_input_elicitation( ).
     input->set_url( message = `Authorize`
-                    url     = `https://example.com/authorize` ).
+                    url     = `https://example.com/authorize` )  ##NO_TEXT.
     ir = NEW zcl_mcp2_resp_input_req( ).
     ir->set_request_state( `url-state` ).
     ir->add_request( request_key = `auth`
@@ -401,7 +403,7 @@ CLASS ltcl_ir_form_server IMPLEMENTATION.
     DATA ir    TYPE REF TO zcl_mcp2_resp_input_req.
 
     input = NEW zcl_mcp2_input_elicitation( ).
-    input->set_form( `Confirm?` ).
+    input->set_form( `Confirm?` )  ##NO_TEXT.
     ir = NEW zcl_mcp2_resp_input_req( ).
     ir->add_request( request_key = `confirm`
                      input       = input ).
@@ -586,7 +588,7 @@ CLASS ltcl_schema_oneof_srv IMPLEMENTATION.
   METHOD zif_mcp2_server~get_tool_schema.
     " x-mcp-header nested inside oneOf - must be rejected per spec
     result = zcl_mcp2_ajson=>parse(
-      `{"type":"object","properties":{"p":{"oneOf":[{"type":"string","x-mcp-header":"Bad"}]}}}` ).
+      `{"type":"object","properties":{"p":{"oneOf":[{"type":"string","x-mcp-header":"Bad"}]}}}` )  ##NO_TEXT.
   ENDMETHOD.
 ENDCLASS.
 
@@ -638,7 +640,7 @@ CLASS ltcl_hdr_test_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_mcp2_server~get_tool_schema.
-    result = zcl_mcp2_ajson=>parse( `{"type":"object","properties":{"p":{"type":"string","x-mcp-header":"P"}}}` ).
+    result = zcl_mcp2_ajson=>parse( `{"type":"object","properties":{"p":{"type":"string","x-mcp-header":"P"}}}` )  ##NO_TEXT.
   ENDMETHOD.
 ENDCLASS.
 
@@ -909,13 +911,11 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     DATA(result_json) = zcl_mcp2_ajson=>parse( zcl_mcp2_jsonrpc=>serialize_response( resp ) ).
     DATA(tab) = cl_abap_char_utilities=>horizontal_tab.
     DATA(server_info_path) = '/result/_meta/io.modelcontextprotocol' && tab && 'serverInfo'.
-    " serverInfo is written twice: top-level (kept for every currently
-    " published SDK, whose bundled DiscoverResultSchema still requires it)
-    " and in _meta (ResultMetaObject, the spec-current location).
-    cl_abap_unit_assert=>assert_equals( exp = `ModernServer`
-                                        act = result_json->get_string( '/result/serverInfo/name' ) ).
+    " serverInfo lives in _meta (ResultMetaObject) only; the discover body
+    " carries no top-level serverInfo since the 2026-07-16 schema change.
     cl_abap_unit_assert=>assert_equals( exp = `ModernServer`
                                         act = result_json->get_string( |{ server_info_path }/name| ) ).
+    cl_abap_unit_assert=>assert_false( result_json->exists( '/result/serverInfo' ) ).
     cl_abap_unit_assert=>assert_true( result_json->exists( '/result/supportedVersions' ) ).
     cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>result_types-complete
                                         act = result_json->get_string( '/result/resultType' ) ).
@@ -924,7 +924,6 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>cache_scopes-private
                                         act = result_json->get_string( '/result/cacheScope' ) ).
     " Optional identity fields are omitted when the server provides none.
-    cl_abap_unit_assert=>assert_false( result_json->exists( '/result/serverInfo/title' ) ).
     cl_abap_unit_assert=>assert_false( result_json->exists( |{ server_info_path }/title| ) ).
   ENDMETHOD.
 
@@ -946,18 +945,8 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     DATA(result_json) = zcl_mcp2_ajson=>parse( zcl_mcp2_jsonrpc=>serialize_response( resp ) ).
     DATA(tab) = cl_abap_char_utilities=>horizontal_tab.
     DATA(server_info_path) = '/result/_meta/io.modelcontextprotocol' && tab && 'serverInfo'.
-    " Top-level (SDK compat).
-    cl_abap_unit_assert=>assert_equals( exp = `Ident Server`
-                                        act = result_json->get_string( '/result/serverInfo/title' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `Serves identity fields for tests.`
-                                        act = result_json->get_string( '/result/serverInfo/description' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `https://example.com/ident`
-                                        act = result_json->get_string( '/result/serverInfo/websiteUrl' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `https://example.com/ident.png`
-                                        act = result_json->get_string( '/result/serverInfo/icons/1/src' ) ).
-    cl_abap_unit_assert=>assert_equals( exp = `light`
-                                        act = result_json->get_string( '/result/serverInfo/icons/1/theme' ) ).
-    " _meta (spec-current location).
+    " _meta is the only identity location in the modern era.
+    cl_abap_unit_assert=>assert_false( result_json->exists( '/result/serverInfo' ) ).
     cl_abap_unit_assert=>assert_equals( exp = `Ident Server`
                                         act = result_json->get_string( |{ server_info_path }/title| ) ).
     cl_abap_unit_assert=>assert_equals( exp = `Serves identity fields for tests.`
@@ -1668,6 +1657,61 @@ CLASS ltcl_dispatch_modern IMPLEMENTATION.
     DATA(resp) = d->dispatch( request      = req
                               header_ver   = zif_mcp2_const=>protocol-v2026_07_28
                               http_request = http ).
+
+    cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>error_codes-header_mismatch
+                                        act = resp-error-code ).
+  ENDMETHOD.
+
+  METHOD test_tasks_no_name_hdr_ok.
+    " The counterpart of test_tasks_name_hdr_mismatch: an omitted Mcp-Name on
+    " tasks/* is accepted. The Tasks extension obliges the CLIENT to send it
+    " for routing affinity, but no spec text obliges a server to reject its
+    " absence, and this SDK reads every task from ZMCP2_TASKS - there is no
+    " instance affinity to protect. tools/call and friends still require it
+    " (test_tools_call_no_name_hdr).
+    DATA req TYPE zcl_mcp2_jsonrpc=>request.
+    req-jsonrpc    = `2.0`.
+    req-method     = zif_mcp2_const=>methods-tasks_get.
+    req-id         = `1`.
+    req-id_present = abap_true.
+    DATA(meta) = modern_params_with_tasks_cap( ).
+    meta->set_string( iv_path = '/taskId' iv_val = `AABBCCDDEEFF00112233445566778899` ).
+    req-params = meta.
+
+    DATA http TYPE REF TO ltcl_mock_request.
+    http = NEW #( ).
+    APPEND zif_mcp2_const=>headers-method TO http->headers.
+    APPEND zif_mcp2_const=>methods-tasks_get TO http->hdr_vals.
+
+    DATA d TYPE REF TO zcl_mcp2_dispatch_modern.
+    d = NEW zcl_mcp2_dispatch_modern( NEW ltcl_task_cap_server( ) ).
+    DATA(resp) = d->dispatch( request      = req
+                              header_ver   = zif_mcp2_const=>protocol-v2026_07_28
+                              http_request = http ).
+
+    cl_abap_unit_assert=>assert_initial( resp-error-code ).
+  ENDMETHOD.
+
+  METHOD test_tools_call_no_name_hdr.
+    " Core transport: Mcp-Name is a required standard header for tools/call,
+    " so a missing one stays -32020 - the leniency above is tasks/* only.
+    DATA req TYPE zcl_mcp2_jsonrpc=>request.
+    req-jsonrpc    = `2.0`.
+    req-method     = zif_mcp2_const=>methods-tools_call.
+    req-id         = `1`.
+    req-id_present = abap_true.
+    DATA(params) = modern_params( ).
+    params->set_string( iv_path = '/name' iv_val = `echo` ).
+    req-params = params.
+
+    DATA http TYPE REF TO ltcl_mock_request.
+    http = NEW #( ).
+    APPEND zif_mcp2_const=>headers-method TO http->headers.
+    APPEND zif_mcp2_const=>methods-tools_call TO http->hdr_vals.
+
+    DATA(resp) = dispatcher->dispatch( request      = req
+                                       header_ver   = zif_mcp2_const=>protocol-v2026_07_28
+                                       http_request = http ).
 
     cl_abap_unit_assert=>assert_equals( exp = zif_mcp2_const=>error_codes-header_mismatch
                                         act = resp-error-code ).

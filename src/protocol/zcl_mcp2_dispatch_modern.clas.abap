@@ -67,9 +67,9 @@ CLASS zcl_mcp2_dispatch_modern DEFINITION PUBLIC FINAL CREATE PUBLIC.
       RETURNING VALUE(result) TYPE abap_bool.
 
     "! <p class="shorttext synchronized">Handle server/discover</p>
-    "! Server identity (serverInfo) is written both top-level (SDK compat)
-    "! and, by the caller via stamp_server_info, into _meta (spec-current).
-    "! @parameter result | discover result (versions, caps, serverInfo, hints)
+    "! Server identity is not part of the discover body; the caller writes it
+    "! into _meta via stamp_server_info, like on every other modern result.
+    "! @parameter result | discover result (versions, caps, hints)
     "! @raising zcx_mcp2_ajson_error | JSON build/parse failure
     METHODS handle_discover
       RETURNING VALUE(result) TYPE REF TO zif_mcp2_ajson
@@ -642,13 +642,23 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
           |Mcp-Method header '{ header_method }' does not match method '{ request-method }'| ) ##NO_TEXT.
     ENDIF.
 
+    " name_source names the body field the header has to carry. It is part of
+    " every Mcp-Name error message: which field feeds the header differs per
+    " method, and for tasks/* the rule lives in the Tasks extension rather than
+    " the core transport document, so clients routinely miss it.
     DATA(expected_name) = ``.
+    DATA(name_source)   = ``.
+    DATA name_required TYPE abap_bool.
     CASE request-method.
       WHEN zif_mcp2_const=>methods-tools_call
         OR zif_mcp2_const=>methods-prompts_get.
         expected_name = request-params->get_string( '/name' ).
+        name_source   = `params.name` ##NO_TEXT.
+        name_required = abap_true.
       WHEN zif_mcp2_const=>methods-resources_read.
         expected_name = request-params->get_string( '/uri' ).
+        name_source   = `params.uri` ##NO_TEXT.
+        name_required = abap_true.
       WHEN zif_mcp2_const=>methods-tasks_get
         OR zif_mcp2_const=>methods-tasks_update
         OR zif_mcp2_const=>methods-tasks_cancel.
@@ -657,7 +667,16 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
         " Compare the wire values before the request parser normalizes the UUID
         " for database lookup. Lowercase task ids are therefore valid when both
         " header and body use the same lowercase spelling.
+        " Presence is NOT enforced here: the Tasks extension makes Mcp-Name a
+        " client MUST for tasks/*, but neither it nor the core transport puts a
+        " server under any duty to reject an absent one - the core "required
+        " standard header missing" rule covers tools/call, prompts/get and
+        " resources/read only. The stated purpose is routing affinity, and this
+        " SDK serves every task from ZMCP2_TASKS, so any app server can answer
+        " any tasks/* request. A header that IS sent must still match: a wrong
+        " value is a genuine split-brain risk, an absent one is not.
         expected_name = request-params->get_string( '/taskId' ).
+        name_source   = `params.taskId` ##NO_TEXT.
     ENDCASE.
 
     IF expected_name IS INITIAL.
@@ -667,14 +686,18 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
     DATA(header_name) = http_request->get_header( zif_mcp2_const=>headers-name ).
     IF has_header( http_request = http_request
                    header_name  = zif_mcp2_const=>headers-name ) = abap_false.
-      zcx_mcp2_error=>raise_header_mismatch( `Mcp-Name header is required` ) ##NO_TEXT.
+      IF name_required = abap_true.
+        zcx_mcp2_error=>raise_header_mismatch(
+            |Mcp-Name header is required for { request-method } and must carry { name_source }| ) ##NO_TEXT.
+      ENDIF.
+      RETURN.
     ENDIF.
     DATA(decoded_name) = normalize_header_value(
         header_name  = zif_mcp2_const=>headers-name
         header_value = header_name ).
     IF decoded_name <> expected_name.
       zcx_mcp2_error=>raise_header_mismatch(
-          |Mcp-Name header '{ header_name }' does not match request name '{ expected_name }'| ) ##NO_TEXT.
+          |Mcp-Name header '{ header_name }' does not match { name_source } '{ expected_name }'| ) ##NO_TEXT.
     ENDIF.
   ENDMETHOD.
 
@@ -692,44 +715,10 @@ CLASS zcl_mcp2_dispatch_modern IMPLEMENTATION.
   METHOD handle_discover.
     result = zcl_mcp2_ajson=>create_empty( ).
 
-    " Server identity is written twice, deliberately:
-    " - top-level /serverInfo/... : removed from the schema on 2026-07-28
-    "   (2026-07-16 change), but every currently published TypeScript v2 SDK
-    "   release (through 2.0.0-beta.4) bundles its own DiscoverResultSchema
-    "   with serverInfo still REQUIRED. Omitting it makes the SDK's own
-    "   client.connect() version-negotiation probe fail its result validation
-    "   and misclassify the server as non-modern - breaking every SDK-based
-    "   modern test, not just serverInfo assertions. The schema no longer
-    "   forbids extra top-level properties (no additionalProperties: false
-    "   here), so this remains draft-conformant.
-    " - _meta.serverInfo (stamp_server_info, called by the caller) : the new
-    "   spec-conformant location (ResultMetaObject), shared by every modern
-    "   result, not just discover.
-    " Drop the top-level write once a released SDK reads serverInfo from
-    " _meta for the modern era.
-    result->set_string( iv_path = '/serverInfo/name'
-                        iv_val  = server->get_name( ) ).
-    result->set_string( iv_path = '/serverInfo/version'
-                        iv_val  = server->get_version( ) ).
-    DATA(title) = server->get_title( ).
-    IF title IS NOT INITIAL.
-      result->set_string( iv_path = '/serverInfo/title'
-                          iv_val  = title ).
-    ENDIF.
-    DATA(description) = server->get_description( ).
-    IF description IS NOT INITIAL.
-      result->set_string( iv_path = '/serverInfo/description'
-                          iv_val  = description ).
-    ENDIF.
-    DATA(website_url) = server->get_website_url( ).
-    IF website_url IS NOT INITIAL.
-      result->set_string( iv_path = '/serverInfo/websiteUrl'
-                          iv_val  = website_url ).
-    ENDIF.
-    zcl_mcp2_icons=>emit( json  = result
-                          path  = '/serverInfo/icons'
-                          icons = server->get_icons( ) ).
-
+    " Server identity is not written here. The 2026-07-16 schema change moved
+    " it out of the discover body into _meta.io.modelcontextprotocol/serverInfo
+    " (ResultMetaObject), where stamp_server_info writes it for every modern
+    " result, discover included.
     DATA(instructions) = server->get_instructions( ).
     IF instructions IS NOT INITIAL.
       result->set_string( iv_path = '/instructions'

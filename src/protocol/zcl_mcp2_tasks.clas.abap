@@ -290,9 +290,16 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_payload.
+    " A host variable named like a column of the addressed table is read as
+    " that column once the downport drops the @ escape - WHERE task_id =
+    " task_id would then match every row. Every task_id used in a WHERE or SET
+    " clause therefore goes through a differently named local, like area_arg
+    " and server_arg in list( ).
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     SELECT SINGLE payload, created_by
       FROM zmcp2_tasks
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
       INTO @DATA(db_row).
 
     IF sy-subrc <> 0 OR db_row-created_by <> sy-uname.
@@ -330,7 +337,7 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
       IF id_txt IS INITIAL.
         cursor_task_id = 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'.
       ELSE.
-        FIND REGEX `^[0-9A-Fa-f]{32}$` IN id_txt.
+        FIND REGEX `^[0-9A-Fa-f]{32}$` IN id_txt  ##NO_TEXT.
         IF sy-subrc <> 0.
           zcx_mcp2_error=>raise_invalid_params( `Invalid cursor` ) ##NO_TEXT.
         ENDIF.
@@ -376,11 +383,13 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
     DATA now TYPE timestamp.
     GET TIME STAMP FIELD now.
     DATA(db_msg) = message.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     UPDATE zmcp2_tasks
       SET status         = @db_next,
           status_message = @db_msg,
           last_updated   = @now
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
         AND status  = @row-status.
     IF sy-subrc <> 0.
       DATA(re_read) = read_row( task_id ).
@@ -423,12 +432,14 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
     DATA now TYPE timestamp.
     GET TIME STAMP FIELD now.
     DATA(db_inp) = db_input_req.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     UPDATE zmcp2_tasks
       SET payload      = @payload_str,
           request_keys = @history_str,
           status       = @db_inp,
           last_updated = @now
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
         AND status  = @row-status.
     IF sy-subrc <> 0.
       zcx_mcp2_error=>raise_internal(
@@ -532,11 +543,13 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
                                      ELSE db_input_req ).
     DATA now TYPE timestamp.
     GET TIME STAMP FIELD now.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     UPDATE zmcp2_tasks
       SET payload      = @payload_str,
           status       = @next_status,
           last_updated = @now
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
         AND status  = @db_inp.
     IF sy-subrc <> 0.
       zcx_mcp2_error=>raise_internal(
@@ -549,10 +562,12 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
     DATA(wstatus) = zif_mcp2_const=>task_statuses-working.
     DATA now TYPE timestamp.
     GET TIME STAMP FIELD now.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     UPDATE zmcp2_tasks
       SET payload      = @payload_str,
           last_updated = @now
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
         AND status  = @wstatus.
     IF sy-subrc <> 0.
       DATA(row) = read_row( task_id ).
@@ -577,11 +592,13 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
     ENDIF.
     DATA now TYPE timestamp.
     GET TIME STAMP FIELD now.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     UPDATE zmcp2_tasks
       SET payload      = @payload_str,
           status       = @final_status,
           last_updated = @now
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
         AND status  = @row-status.
     IF sy-subrc <> 0.
       zcx_mcp2_error=>raise_internal( `Task has already reached a terminal state` ) ##NO_TEXT.
@@ -597,12 +614,14 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
     ENDIF.
     DATA now TYPE timestamp.
     GET TIME STAMP FIELD now.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     UPDATE zmcp2_tasks
       SET status         = @fstatus,
           status_message = @message,
           error_code     = @code,
           last_updated   = @now
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
         AND status  = @row-status.
     IF sy-subrc <> 0.
       zcx_mcp2_error=>raise_internal( `Task has already reached a terminal state` ) ##NO_TEXT.
@@ -610,9 +629,11 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD cancel.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     SELECT SINGLE task_id, status, created_by
       FROM zmcp2_tasks
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
       INTO @DATA(snap).
     IF sy-subrc <> 0 OR snap-created_by <> sy-uname.
       zcx_mcp2_error=>raise_invalid_params(
@@ -633,7 +654,7 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
     UPDATE zmcp2_tasks
       SET status       = @cstatus,
           last_updated = @now
-      WHERE task_id    = @task_id
+      WHERE task_id    = @task_id_arg
         AND created_by = @sy-uname
         AND status     = @snap-status.
     IF sy-subrc = 0.
@@ -641,7 +662,7 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
     ENDIF.
     SELECT SINGLE status, created_by
       FROM zmcp2_tasks
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
       INTO @DATA(curr).
     IF sy-subrc <> 0 OR curr-created_by <> sy-uname.
       zcx_mcp2_error=>raise_invalid_params(
@@ -727,9 +748,11 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD read_row.
+    DATA task_id_arg TYPE zmcp2_tasks-task_id.
+    task_id_arg = task_id.
     SELECT SINGLE *
       FROM zmcp2_tasks
-      WHERE task_id = @task_id
+      WHERE task_id = @task_id_arg
       INTO CORRESPONDING FIELDS OF @result.
     IF sy-subrc <> 0.
       zcx_mcp2_error=>raise_invalid_params(
@@ -738,20 +761,23 @@ CLASS zcl_mcp2_tasks IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD is_valid_transition.
+    " Branched per source status: the downport folds a multi-line xsdbool( )
+    " onto one line, and covering both statuses in a single expression puts it
+    " past the 255 character ABAP source line limit, where SAP truncates it.
     DATA(w) = zif_mcp2_const=>task_statuses.
-    result = xsdbool(
-      (    current = w-working
-        AND (    next = w-working
-              OR next = db_input_req
-              OR next = w-completed
-              OR next = w-failed
-              OR next = w-cancelled ) )
-      OR
-      (    current = db_input_req
-        AND (    next = w-working
-              OR next = w-completed
-              OR next = w-failed
-              OR next = w-cancelled ) ) ).
+    CASE current.
+      WHEN w-working.
+        result = xsdbool(    next = w-working
+                          OR next = db_input_req
+                          OR next = w-completed
+                          OR next = w-failed
+                          OR next = w-cancelled ).
+      WHEN db_input_req.
+        result = xsdbool(    next = w-working
+                          OR next = w-completed
+                          OR next = w-failed
+                          OR next = w-cancelled ).
+    ENDCASE.
   ENDMETHOD.
 
   METHOD wire_to_db.

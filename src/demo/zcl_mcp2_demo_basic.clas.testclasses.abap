@@ -118,15 +118,22 @@ CLASS ltcl_demo_basic IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals( exp = `echo`
                                         act = parsed->get_string( '/tools/1/name' ) ).
+    " echo itself carries no x-mcp-header: it has to stay callable by clients
+    " that do not implement SEP-2243 mirroring yet. The annotation lives on
+    " the dedicated tool next to it.
+    cl_abap_unit_assert=>assert_false(
+        parsed->exists( '/tools/1/inputSchema/properties/message/x-mcp-header' ) ).
+    cl_abap_unit_assert=>assert_equals( exp = `echo_sep2243_mirror`
+                                        act = parsed->get_string( '/tools/2/name' ) ).
     cl_abap_unit_assert=>assert_equals(
         exp = `Message`
-        act = parsed->get_string( '/tools/1/inputSchema/properties/message/x-mcp-header' ) ).
+        act = parsed->get_string( '/tools/2/inputSchema/properties/message/x-mcp-header' ) ).
     " The catalog order is the order of the define_tools entries and is part
     " of what clients cache, so it is pinned here.
     cl_abap_unit_assert=>assert_equals( exp = `price_quote`
-                                        act = parsed->get_string( '/tools/3/name' ) ).
+                                        act = parsed->get_string( '/tools/4/name' ) ).
     cl_abap_unit_assert=>assert_equals( exp = `request_info`
-                                        act = parsed->get_string( '/tools/5/name' ) ).
+                                        act = parsed->get_string( '/tools/6/name' ) ).
   ENDMETHOD.
 
   METHOD test_request_info_legacy.
@@ -329,9 +336,9 @@ CLASS ltcl_demo_basic IMPLEMENTATION.
     DATA(parsed) = zcl_mcp2_ajson=>parse( server->tools_list(
         NEW zcl_mcp2_req_list_tools( zcl_mcp2_ajson=>create_empty( ) ) )->to_json( )->stringify( ) ).
 
-    DATA(schema_path) = `/tools/3/inputSchema`.
+    DATA(schema_path) = `/tools/4/inputSchema`.
     cl_abap_unit_assert=>assert_equals( exp = `price_quote`
-                                        act = parsed->get_string( '/tools/3/name' ) ).
+                                        act = parsed->get_string( '/tools/4/name' ) ).
     cl_abap_unit_assert=>assert_equals(
       exp = `Unit price`
       act = parsed->get_string( |{ schema_path }/properties/unit_price/title| ) ).
