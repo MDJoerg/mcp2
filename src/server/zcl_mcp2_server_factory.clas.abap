@@ -26,9 +26,17 @@ CLASS zcl_mcp2_server_factory IMPLEMENTATION.
   METHOD get_server.
     DATA object TYPE REF TO object.
 
+    " Host variables that share a name with a column of the addressed table are
+    " read as that column once the downport drops the @ escape - WHERE area =
+    " area would then match every row and resolve an arbitrary server class.
+    DATA area_arg   TYPE zmcp2_servers-area.
+    DATA server_arg TYPE zmcp2_servers-server.
+    area_arg   = area.
+    server_arg = server.
+
     SELECT SINGLE class FROM zmcp2_servers
-      WHERE area   = @area
-        AND server = @server
+      WHERE area   = @area_arg
+        AND server = @server_arg
       INTO @DATA(class_name).
     IF sy-subrc <> 0 OR class_name IS INITIAL.
       RETURN.

@@ -3,7 +3,7 @@ INTERFACE zif_mcp2_const PUBLIC.
 
   " Version of this SDK, not of the MCP protocol (see protocol below) and not
   " of the server built on it (that is zif_mcp2_server~get_version).
-  CONSTANTS sdk_version TYPE string VALUE `0.1.0`.
+  CONSTANTS sdk_version TYPE string VALUE `1.0.0`.
 
   CONSTANTS jsonrpc_version TYPE string VALUE `2.0`.
 

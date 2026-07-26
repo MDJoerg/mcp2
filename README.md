@@ -12,8 +12,7 @@ This is a **server** implementation only. It is **stateless** — no protocol se
 so notification- and subscription-based features are out of scope by design (see
 [docs/ProtocolSupport.md](docs/ProtocolSupport.md)).
 
-> **Status:** `0.1.0` — first beta ([changelog](CHANGELOG.md)). Pre-release: the ABAP API surface
-> is not frozen and breaking changes may land in any release before `1.0.0`.
+> **Status:** `1.0.0` ([changelog](CHANGELOG.md)). 
 > Active v2 implementation for the stateless `2026-07-28` protocol generation.
 > Protocol core, data classes, HTTP runtime, config/factory, DDIC tables, demo servers and
 > the request/response Tasks extension are implemented and covered by abaplint plus the
@@ -23,7 +22,7 @@ so notification- and subscription-based features are out of scope by design (see
 
 ## Main Differences from V1 MCP SDK
 
-- Currently no 7.x downport - planned to be added with release, like within 1 month of spec release
+- 7.02 – 7.4x support ships as a separate generated downport repository, not from this one --> https://github.com/abap-ai/mcp2-702
 - No sessions, etc. 
 - No default auth object and check delivered --> you **must** implement your own auth checks if required, see [Configuration and security](docs/ConfigurationAndSecurity.md)
 - No table maintenance due to frequent install issues
@@ -104,7 +103,8 @@ so notification- and subscription-based features are out of scope by design (see
 ## Target / tooling
 
 - ABAP **7.5x** classic (first iteration). abaplint `v752`.
-- ABAP 7.4x donwport planned to be added after beta phase, cloud-ready not planned.
+- ABAP **7.02 – 7.4x** via a generated downport, published as a [separate abapGit repository](https://github.com/abap-ai/mcp2-702).
+  Cloud-ready not planned.
 - Distributed via [abapGit](https://github.com/abapGit/abapGit).
 
 ## Used ABAP open-source projects

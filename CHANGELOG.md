@@ -2,17 +2,23 @@
 
 All notable changes to the `mcp2` SDK are recorded here.
 
-This SDK is pre-release. Until `1.0.0`, **breaking changes may land in any release** — the ABAP
-API surface is not yet frozen. Breaking changes are always listed first in their entry.
-
 The SDK version is available at runtime as `zif_mcp2_const=>sdk_version`. It is independent of
 the MCP protocol version (`zif_mcp2_const=>protocol`) and of the version your own server reports
 via `get_version( )`.
 
-## Unreleased
+## 1.0.0 - 2026-07-26
 
-### Protocol (breaking, wire only)
+First stable release, cut alongside the `2026-07-28` spec generation. Everything below is relative to the `0.1.0` beta.
 
+### Protocol
+
+- `Mcp-Name` is no longer required on `tasks/get` / `tasks/update` / `tasks/cancel`. A header that
+  is sent must still match `params.taskId` (`-32020`), an absent one is accepted: the Tasks
+  extension puts that MUST on the client, and this SDK reads every task from `ZMCP2_TASKS`, so
+  there is no app-server affinity to protect. `tools/call`, `prompts/get` and `resources/read`
+  still require the header.
+- `Mcp-Name` errors now name the body field the header has to carry (`params.name`, `params.uri`,
+  `params.taskId`) instead of just reporting a mismatch.
 - `server/discover` no longer writes the superseded top-level `serverInfo` field. Modern server
   identity is now emitted only in `_meta["io.modelcontextprotocol/serverInfo"]`, on every modern
   result, which is where the `2026-07-28` draft put it on 2026-07-16. The top-level write existed
@@ -22,6 +28,19 @@ via `get_version( )`.
   them. Legacy `initialize` is unchanged: `serverInfo` stays a top-level result field there.
   No ABAP API change; `get_title` / `get_description` / `get_website_url` / `get_icons` behave
   exactly as before.
+
+### Fixed (downport only, 7.02 – 7.4x)
+
+- Open SQL host variables named like a column of the table they address now go through renamed
+  locals (`task_id_arg`, `area_arg`, `server_arg`). Without the `@` escape the column wins, so
+  `WHERE task_id = task_id` matched *every* row — foreign task reads and updates, unscoped CORS
+  allowlists, arbitrary server classes. 7.5x was never affected.
+- `zcl_mcp2_schema_builder_ddic` passes a typed `ddobjname` instead of `CONV #( )`, which
+  downported to `TYPE undefined`.
+- `ZMCP2_CLEAR_TASKS` no longer sets `LDBNAME` to `&NC&` ("local database &NC& is unknown").
+- The downport now post-processes what abaplint leaves in strict-syntax form: commas in
+  `UPDATE … SET`, `UP TO n ROWS` after `ORDER BY`, and trailing blanks. Lines over 255 characters
+  abort the build instead of being silently truncated on import.
 
 ## 0.1.0 — first beta - 2026-07-19
 
